@@ -36,7 +36,9 @@ async function run() {
         for (let i = 0; i < messages.length; i++) {
             const messageText = await messages[i].$eval('.easy-card-main .easy-card-main-content .text', (node) => node.innerText.trim());
             const votes = await messages[i].$eval('.easy-card-votes-container .easy-badge-votes', (node) => node.innerText.trim());
-            parsedText += `- ${messageText} (${votes})` + '\n';
+            if (votes > 0){
+              parsedText += `${messageText} (${votes})` + '\n';
+            }
         }
 
         if (messages.length) {
@@ -48,7 +50,7 @@ async function run() {
 }
 
 function writeToFile(filePath, data) {
-    const resolvedPath = path.resolve(filePath || `../${data.split('\n')[0].replace('/', '')}.txt`);
+    const resolvedPath = path.resolve(filePath || `../${data.split('\n')[0].replace('/\s/g', '')}.csv`);
     fs.writeFile(resolvedPath, data, (error) => {
         if (error) {
             throw error;
